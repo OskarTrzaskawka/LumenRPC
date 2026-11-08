@@ -2,22 +2,35 @@
 
 use std::collections::BTreeSet;
 
+/// Reads the process list straight from the kernel (Toolhelp snapshot) — far cheaper than spawning `tasklist`.
 #[cfg(windows)]
 pub fn processes() -> Vec<String> {
-    use std::os::windows::process::CommandExt;
-    const CREATE_NO_WINDOW: u32 = 0x0800_0000;
-    let out = std::process::Command::new("tasklist")
-        .args(["/FO", "CSV", "/NH"])
-        .creation_flags(CREATE_NO_WINDOW)
-        .output();
-    let Ok(out) = out else { return vec![] };
-    let text = String::from_utf8_lossy(&out.stdout);
-    let set: BTreeSet<String> = text
-        .lines()
-        .filter_map(|l| l.split("\",\"").next())
-        .map(|n| n.trim_matches('"').to_lowercase())
-        .filter(|n| !n.is_empty())
-        .collect();
+    use windows_sys::Win32::Foundation::{CloseHandle, INVALID_HANDLE_VALUE};
+    use windows_sys::Win32::System::Diagnostics::ToolHelp::{
+        CreateToolhelp32Snapshot, PROCESSENTRY32W, Process32FirstW, Process32NextW, TH32CS_SNAPPROCESS,
+    };
+    let mut set = BTreeSet::new();
+    unsafe {
+        let snap = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+        if snap == INVALID_HANDLE_VALUE {
+            return vec![];
+        }
+        let mut entry: PROCESSENTRY32W = std::mem::zeroed();
+        entry.dwSize = size_of::<PROCESSENTRY32W>() as u32;
+        if Process32FirstW(snap, &mut entry) != 0 {
+            loop {
+                let len = entry.szExeFile.iter().position(|&c| c == 0).unwrap_or(entry.szExeFile.len());
+                let name = String::from_utf16_lossy(&entry.szExeFile[..len]).to_lowercase();
+                if !name.is_empty() {
+                    set.insert(name);
+                }
+                if Process32NextW(snap, &mut entry) == 0 {
+                    break;
+                }
+            }
+        }
+        CloseHandle(snap);
+    }
     set.into_iter().collect()
 }
 

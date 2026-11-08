@@ -60,13 +60,14 @@ export function Connect() {
 
   return (
     <div className="flex h-full min-h-0 flex-wrap overflow-y-auto">
-      <aside className="relative flex min-w-[320px] flex-[1_1_420px] flex-col justify-between overflow-hidden border-r border-line bg-panel p-10">
+      <aside className="relative flex min-w-[320px] flex-[1_1_420px] flex-col overflow-hidden border-r border-line bg-panel p-10">
         <div className="flex items-center gap-2.5">
           <LogoMark size={30} />
           <span className="font-display text-xl font-semibold tracking-tight">Lumen RPC</span>
         </div>
-        <OrbitHero className="mx-auto my-8 w-full max-w-[360px]" />
-        <div>
+        <div className="flex flex-1 flex-col justify-center gap-8 py-8">
+          <OrbitHero className="w-full max-w-[300px]" />
+          <div>
           <h1 className="font-display text-[34px] font-semibold leading-[1.1] tracking-tight">Your Discord status,<br />exactly how you want it.</h1>
           <ul className="mt-6 grid grid-cols-2 gap-3 text-sm text-subtle">
             <li className="flex items-center gap-2.5"><Clock3 size={16} className="text-accent" aria-hidden="true" />7 timer modes</li>
@@ -74,7 +75,10 @@ export function Connect() {
             <li className="flex items-center gap-2.5"><CalendarDays size={16} className="text-accent" aria-hidden="true" />Weekly schedule</li>
             <li className="flex items-center gap-2.5"><LayoutGrid size={16} className="text-accent" aria-hidden="true" />Ready-made templates</li>
           </ul>
-          <p className="mt-8 text-xs text-muted">
+          </div>
+        </div>
+        <div>
+          <p className="text-xs text-muted">
             Made by{" "}
             <button onClick={() => void platform.openUrl("https://github.com/OskarTrzaskawka")} className="cursor-pointer font-medium text-subtle hover:text-accent hover:underline">
               Oskar Trzaskawka
@@ -85,8 +89,7 @@ export function Connect() {
 
       <main className="flex min-w-[320px] flex-[1_1_520px] items-center justify-center p-10">
         <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-[460px]">
-          <div className="text-[13px] font-semibold text-accent">Step 1 of 1</div>
-          <h2 className="mt-2 font-display text-[28px] font-semibold tracking-tight">Connect your application</h2>
+          <h2 className="font-display text-[28px] font-semibold tracking-tight">Connect your application</h2>
           <p className="mt-2 text-sm leading-relaxed text-muted">
             Lumen RPC uses your own Discord application, so the name and images in your status are completely yours. Make sure the Discord desktop app is running.
           </p>

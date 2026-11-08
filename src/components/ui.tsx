@@ -67,11 +67,14 @@ export function Field({ label, hint, children, counter }: { label: string; hint?
 }
 
 export function TextInput({ className, ...rest }: ComponentProps<"input">) {
+  // Only stretch when the caller didn't set a width — otherwise `w-full` would win over e.g. `w-20`.
+  const hasWidth = /(^|\s)w-/.test(className ?? "");
   return (
     <input
       {...rest}
       className={cx(
-        "h-10 w-full min-w-0 rounded-xl border border-line bg-panel px-3.5 text-sm text-text placeholder:text-muted/70 outline-none transition-colors focus:border-accent",
+        !hasWidth && "w-full",
+        "h-10 min-w-0 rounded-xl border border-line bg-panel px-3.5 text-sm text-text placeholder:text-muted/70 outline-none transition-colors focus:border-accent",
         className,
       )}
     />

@@ -173,13 +173,22 @@ export async function initPersistence() {
     useStore.getState().hydrate(defaultPersisted());
   }
   let timer: ReturnType<typeof setTimeout> | undefined;
-  let last = JSON.stringify(persistedSlice(useStore.getState()));
+  // Compare by reference first: most store updates (status, processes, toasts) don't touch saved data,
+  // so we avoid serialising the whole state on every tick.
+  let prev = persistedSlice(useStore.getState());
+  let last = JSON.stringify(prev);
   useStore.subscribe((s) => {
-    const next = JSON.stringify(persistedSlice(s));
-    if (next === last) return;
-    last = next;
+    const cur = persistedSlice(s);
+    const same = (Object.keys(cur) as (keyof Persisted)[]).every((k) => cur[k] === prev[k]);
+    if (same) return;
+    prev = cur;
     clearTimeout(timer);
-    timer = setTimeout(() => void platform.saveState(next), 400);
+    timer = setTimeout(() => {
+      const next = JSON.stringify(persistedSlice(useStore.getState()));
+      if (next === last) return;
+      last = next;
+      void platform.saveState(next);
+    }, 400);
   });
 }
 

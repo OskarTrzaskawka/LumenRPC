@@ -2,8 +2,10 @@ import { useEffect } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { LoaderCircle } from "lucide-react";
 import { useEngine } from "./lib/engine";
+import { useTrayBridge } from "./lib/trayBridge";
 import { platform } from "./lib/platform";
 import { useStore } from "./lib/store";
+import type { Page } from "./lib/types";
 import { Sidebar } from "./components/Sidebar";
 import { Palette } from "./components/Palette";
 import { Toasts } from "./components/Toasts";
@@ -13,6 +15,9 @@ import { Automations } from "./pages/Automations";
 import { Schedule } from "./pages/Schedule";
 import { Gallery } from "./pages/Gallery";
 import { SettingsPage } from "./pages/Settings";
+
+/** Browser demo deep link straight into the app, e.g. ?demo=app&page=automations (used for screenshots). */
+const DEMO_APP = platform.isDemo && new URLSearchParams(location.search).get("demo") === "app";
 
 /** Wires host events (status, tray, shortcuts) into the store. */
 function useHostBridge() {
@@ -27,6 +32,14 @@ function useHostBridge() {
   useEffect(() => {
     if (!loaded) return;
     const s = useStore.getState();
+    // Browser demo deep links, e.g. ?demo=app&page=automations (used for screenshots).
+    if (DEMO_APP) {
+      const page = new URLSearchParams(location.search).get("page");
+      if (page) s.setPage(page as Page);
+      s.setClientId("1234567890123456789", { id: "1234567890123456789", name: "Lumen RPC", icon: null });
+      s.setStatus({ state: "connected", user: { id: "1", username: "lumen_demo", global_name: "You (demo)", avatar: null } });
+      return;
+    }
     if (s.clientId && s.settings.autoConnect && s.status.state === "disconnected") void platform.connect(s.clientId).catch(() => {});
   }, [loaded]);
 
@@ -37,7 +50,7 @@ function useHostBridge() {
       platform.onTrayClear(() => useStore.getState().setPaused(true)),
       platform.onOpenPalette(() => useStore.setState({ paletteOpen: true })),
     ];
-    void platform.status().then((st) => useStore.getState().setStatus(st));
+    if (!DEMO_APP) void platform.status().then((st) => useStore.getState().setStatus(st));
     const onKey = (e: KeyboardEvent) => {
       if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
         e.preventDefault();
@@ -92,6 +105,7 @@ export default function App() {
   const page = useStore((s) => s.page);
   useHostBridge();
   useEngine();
+  useTrayBridge();
 
   if (!loaded) return null;
 

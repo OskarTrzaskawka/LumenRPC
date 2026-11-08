@@ -61,9 +61,10 @@ export function Automations() {
           {rules.map((r, i) => {
             const active = firstMatch?.id === r.id;
             return (
-              <li key={r.id} className={cx("rounded-2xl border bg-card p-4 transition-colors", active ? "border-ok/50" : "border-line", !r.enabled && "opacity-60")}>
+              <li key={r.id} className={cx("flex flex-wrap items-start gap-4 rounded-2xl border bg-card p-4 transition-colors", active ? "border-ok/50" : "border-line")}>
+                <div className={cx("flex min-w-0 flex-1 flex-col gap-2.5", !r.enabled && "opacity-50")}>
                 <div className="flex flex-wrap items-center gap-2.5">
-                  <span className="rounded-md bg-raised px-2 py-1 text-[11px] font-bold tracking-[0.06em] text-muted">WHEN</span>
+                  <span className="w-14 rounded-md bg-raised py-1 text-center text-[11px] font-bold tracking-[0.06em] text-muted">WHEN</span>
                   <Select aria-label="Trigger" value={r.trigger} onChange={(e) => update(r.id, { trigger: e.target.value as Rule["trigger"] })}>
                     <option value="process">this app is running</option>
                     <option value="idle" disabled={!idleSupported && r.trigger !== "idle"}>
@@ -71,53 +72,63 @@ export function Automations() {
                     </option>
                   </Select>
                   {r.trigger === "process" ? (
-                    <TextInput
-                      aria-label="Process name"
-                      list="lumen-processes"
-                      placeholder="e.g. code.exe"
-                      value={r.process}
-                      onChange={(e) => update(r.id, { process: e.target.value })}
-                      className="w-48 font-mono text-[13px]"
-                    />
+                    <div className="w-52">
+                      <TextInput
+                        aria-label="Process name"
+                        list="lumen-processes"
+                        placeholder="e.g. code.exe"
+                        value={r.process}
+                        onChange={(e) => update(r.id, { process: e.target.value })}
+                        className="font-mono text-[13px]"
+                      />
+                    </div>
                   ) : (
                     <span className="flex items-center gap-2">
-                      <TextInput
-                        aria-label="Idle minutes"
-                        type="number"
-                        min={1}
-                        value={r.idleMinutes}
-                        onChange={(e) => update(r.id, { idleMinutes: Math.max(1, Number(e.target.value) || 1) })}
-                        className="w-20"
-                      />
+                      <div className="w-20">
+                        <TextInput
+                          aria-label="Idle minutes"
+                          type="number"
+                          min={1}
+                          value={r.idleMinutes}
+                          onChange={(e) => update(r.id, { idleMinutes: Math.max(1, Number(e.target.value) || 1) })}
+                        />
+                      </div>
                       <span className="text-sm text-muted">min</span>
                     </span>
                   )}
-                  <ArrowRight size={16} className="text-muted" aria-hidden="true" />
-                  <span className="rounded-md bg-accent/15 px-2 py-1 text-[11px] font-bold tracking-[0.06em] text-accent">SHOW</span>
-                  <Select aria-label="Profile" value={r.profileId} onChange={(e) => update(r.id, { profileId: e.target.value })}>
+                </div>
+                <div className="flex flex-wrap items-center gap-2.5">
+                  <span className="w-14 rounded-md bg-accent/15 py-1 text-center text-[11px] font-bold tracking-[0.06em] text-accent">SHOW</span>
+                  <Select aria-label="Profile" value={r.profileId} onChange={(e) => update(r.id, { profileId: e.target.value })} className="min-w-44">
                     {profiles.map((p) => (
                       <option key={p.id} value={p.id}>
                         {p.name}
                       </option>
                     ))}
                   </Select>
-                  <div className="ml-auto flex items-center gap-1">
-                    {active && <span className="mr-2 text-xs font-medium text-ok">Matching now</span>}
+                  {active && (
+                    <span className="flex items-center gap-1.5 text-xs font-medium text-ok">
+                      <ArrowRight size={14} aria-hidden="true" /> Matching now
+                    </span>
+                  )}
+                </div>
+                </div>
+                  <div className="flex items-center gap-1">
                     <IconButton label="Move up" disabled={i === 0} onClick={() => move(i, -1)}>
                       <ChevronUp size={16} />
                     </IconButton>
                     <IconButton label="Move down" disabled={i === rules.length - 1} onClick={() => move(i, 1)}>
                       <ChevronDown size={16} />
                     </IconButton>
-                    <label className="flex h-9 cursor-pointer items-center gap-2 px-2 text-xs text-muted">
-                      <input type="checkbox" checked={r.enabled} onChange={(e) => update(r.id, { enabled: e.target.checked })} className="h-4 w-4 accent-[var(--accent)]" />
-                      On
+                    <label className="relative mx-1 inline-flex h-9 cursor-pointer items-center" title={r.enabled ? "Rule on" : "Rule off"}>
+                      <input type="checkbox" aria-label="Rule enabled" className="peer sr-only" checked={r.enabled} onChange={(e) => update(r.id, { enabled: e.target.checked })} />
+                      <span className="h-5 w-9 rounded-full bg-line transition-colors peer-checked:bg-accent peer-focus-visible:outline-2 peer-focus-visible:outline-accent" />
+                      <span className="absolute left-0.5 top-[10px] h-4 w-4 rounded-full bg-text transition-transform peer-checked:translate-x-4" />
                     </label>
                     <IconButton label="Delete rule" onClick={() => setRules(rules.filter((x) => x.id !== r.id))} className="hover:text-bad">
                       <Trash2 size={16} />
                     </IconButton>
                   </div>
-                </div>
               </li>
             );
           })}

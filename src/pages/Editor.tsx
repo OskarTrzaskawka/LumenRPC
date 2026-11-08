@@ -168,7 +168,7 @@ function EditorBody({ profile: p }: { profile: Profile }) {
         ) : null}
 
         <Card title="Activity" icon={<Gamepad2 size={15} aria-hidden="true" />}>
-          <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <div className="grid grid-cols-1 gap-4">
             <Field label="Activity type">
               <Segmented
                 label="Activity type"

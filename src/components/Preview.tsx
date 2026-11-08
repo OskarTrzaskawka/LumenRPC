@@ -7,8 +7,14 @@ import type { Profile } from "../lib/types";
 export function useNow(interval = 1000) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
-    const t = setInterval(() => setNow(Date.now()), interval);
-    return () => clearInterval(t);
+    // Don't re-render clocks while the window is hidden in the tray.
+    const tick = () => !document.hidden && setNow(Date.now());
+    const t = setInterval(tick, interval);
+    document.addEventListener("visibilitychange", tick);
+    return () => {
+      clearInterval(t);
+      document.removeEventListener("visibilitychange", tick);
+    };
   }, [interval]);
   return now;
 }

@@ -39,6 +39,13 @@ body {
   user-select: none;
 }
 
+/* The tray panel window is transparent so the panel can have rounded corners and a shadow. */
+html.tray,
+html.tray body {
+  background: transparent;
+  overflow: hidden;
+}
+
 input,
 textarea,
 select {

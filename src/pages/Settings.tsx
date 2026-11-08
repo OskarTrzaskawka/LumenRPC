@@ -127,7 +127,7 @@ export function SettingsPage() {
 
         <Card title="About" icon={<Info size={15} aria-hidden="true" />}>
           <p className="text-sm leading-relaxed text-subtle">
-            Lumen RPC 0.2.0 — Tauri 2, Rust and React 19. Talks to the Discord desktop app over local IPC; nothing leaves your computer except Discord API lookups for your application’s
+            Lumen RPC 0.3.0 — Tauri 2, Rust and React 19. Talks to the Discord desktop app over local IPC; nothing leaves your computer except Discord API lookups for your application’s
             name and images.
           </p>
           <p className="mt-3 text-sm text-subtle">
