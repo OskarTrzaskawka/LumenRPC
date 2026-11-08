@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1280" height="640" viewBox="0 0 1280 640">
+  <rect width="1280" height="640" fill="#0A0B0F"/>
+  <g fill="none" stroke="#1E2030">
+    <circle cx="960" cy="320" r="420"/>
+    <circle cx="960" cy="320" r="320"/>
+    <circle cx="960" cy="320" r="220"/>
+  </g>
+  <circle cx="640" cy="120" r="9" fill="#4FD1C5"/>
+  <circle cx="1220" cy="560" r="8" fill="#FF8A4C"/>
+  <circle cx="1160" cy="70" r="6" fill="#F472B6"/>
+
+  <g transform="translate(80 120) scale(0.3125)">
+    <rect width="512" height="512" rx="116" fill="#8B7CFF"/>
+    <circle cx="256" cy="256" r="148" fill="none" stroke="#0B0C10" stroke-width="30"/>
+    <circle cx="256" cy="256" r="80" fill="#0B0C10"/>
+    <circle cx="230" cy="228" r="24" fill="#EDEBFF"/>
+    <circle cx="361" cy="151" r="58" fill="#8B7CFF"/>
+    <circle cx="361" cy="151" r="38" fill="#3DD68C"/>
+  </g>
+  <text x="78" y="370" font-family="Segoe UI, Inter, sans-serif" font-weight="700" font-size="104" fill="#ECEEF5" letter-spacing="-3">Lumen RPC</text>
+  <text x="82" y="428" font-family="Segoe UI, Inter, sans-serif" font-size="32" fill="#9A9EB3">Custom Discord Rich Presence,</text>
+  <text x="82" y="468" font-family="Segoe UI, Inter, sans-serif" font-size="32" fill="#9A9EB3">with timers, automations and a schedule.</text>
+  <text x="82" y="572" font-family="Segoe UI, Inter, sans-serif" font-size="22" fill="#6E7290">github.com/OskarTrzaskawka/LumenRPC</text>
+
+  <g transform="translate(790 130)">
+    <rect width="380" height="380" rx="22" fill="#121320" stroke="#262838"/>
+    <path d="M0 22a22 22 0 0 1 22-22h336a22 22 0 0 1 22 22v62H0z" fill="#4A3F99"/>
+    <circle cx="62" cy="92" r="38" fill="#232536" stroke="#121320" stroke-width="8"/>
+    <circle cx="89" cy="119" r="10" fill="#3DD68C" stroke="#121320" stroke-width="5"/>
+    <text x="26" y="168" font-family="Segoe UI, Inter, sans-serif" font-weight="700" font-size="22" fill="#ECEEF5">oskar</text>
+    <rect x="22" y="186" width="336" height="172" rx="14" fill="#191A28"/>
+    <text x="38" y="212" font-family="Segoe UI, Inter, sans-serif" font-weight="700" font-size="12" letter-spacing="1" fill="#9A9EB3">PLAYING LUMEN RPC</text>
+    <rect x="38" y="226" width="74" height="74" rx="13" fill="#8B7CFF"/>
+    <circle cx="75" cy="263" r="16" fill="#0B0C10"/>
+    <circle cx="108" cy="296" r="12" fill="#3DD68C" stroke="#191A28" stroke-width="4"/>
+    <text x="128" y="246" font-family="Segoe UI, Inter, sans-serif" font-weight="700" font-size="16" fill="#ECEEF5">Coding</text>
+    <text x="128" y="268" font-family="Segoe UI, Inter, sans-serif" font-size="15" fill="#B8BBCC">Working on a project</text>
+    <text x="128" y="290" font-family="Segoe UI, Inter, sans-serif" font-size="15" fill="#B8BBCC">01:42:09 elapsed</text>
+    <rect x="38" y="314" width="304" height="30" rx="7" fill="#2A2C3B"/>
+    <text x="190" y="334" text-anchor="middle" font-family="Segoe UI, Inter, sans-serif" font-weight="600" font-size="14" fill="#ECEEF5">My GitHub</text>
+  </g>
+</svg>

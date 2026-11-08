@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Lumen RPC Setup</title>
+<style>
+  :root {
+    --bg: #0a0b0f; --panel: #12131c; --line: #242636; --text: #eceef5; --subtle: #b8bbcc; --muted: #8a8ea3;
+    --accent: #8b7cff; --ok: #3dd68c; --bad: #f87171;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+  body {
+    background: var(--bg); color: var(--text); overflow: hidden; user-select: none;
+    font: 14px/1.45 "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", sans-serif;
+    display: flex; flex-direction: column; border: 1px solid var(--line);
+  }
+  .bar { height: 40px; display: flex; align-items: center; justify-content: space-between; padding-left: 16px; }
+  .bar span { font-size: 12px; color: var(--muted); pointer-events: none; }
+  .win { display: flex; }
+  .win button { width: 46px; height: 40px; border: 0; background: transparent; color: var(--muted); cursor: pointer; display: grid; place-items: center; }
+  .win button:hover { background: #1c1d2a; color: var(--text); }
+  .win button.close:hover { background: #c42b1c; color: #fff; }
+  main { flex: 1; display: flex; gap: 28px; padding: 18px 36px 0; align-items: center; position: relative; }
+  .orb { position: relative; width: 168px; height: 168px; flex-shrink: 0; }
+  .orb svg.rings { position: absolute; inset: -40px; width: 248px; height: 248px; animation: spin 24s linear infinite; }
+  .orb .logo { position: absolute; inset: 34px; width: 100px; height: 100px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce) { .orb svg.rings { animation: none; } }
+  .content { flex: 1; min-width: 0; }
+  .eyebrow { font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: .02em; }
+  h1 { margin: 4px 0 6px; font-size: 26px; font-weight: 700; letter-spacing: -.01em; }
+  p { margin: 0; color: var(--muted); }
+  .meta { margin-top: 14px; display: grid; grid-template-columns: auto 1fr; gap: 4px 14px; font-size: 13px; }
+  .meta dt { color: var(--muted); } .meta dd { margin: 0; color: var(--subtle); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .progress { margin-top: 18px; height: 8px; border-radius: 99px; background: var(--line); overflow: hidden; }
+  .progress i { display: block; height: 100%; width: 0; background: var(--accent); border-radius: 99px; transition: width .15s; }
+  .progress.indeterminate i { width: 35%; animation: slide 1.1s ease-in-out infinite; }
+  @keyframes slide { from { transform: translateX(-100%); } to { transform: translateX(300%); } }
+  .status { margin-top: 8px; font-size: 12px; color: var(--muted); font-variant-numeric: tabular-nums; min-height: 18px; }
+  .error { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: rgba(248,113,113,.1); color: var(--bad); font-size: 13px; }
+  footer { height: 72px; display: flex; align-items: center; justify-content: space-between; padding: 0 36px; border-top: 1px solid var(--line); background: var(--panel); }
+  footer .credit { font-size: 12px; color: var(--muted); }
+  a, .link { color: var(--subtle); text-decoration: none; cursor: pointer; background: none; border: 0; font: inherit; padding: 0; }
+  a:hover, .link:hover { color: var(--accent); text-decoration: underline; }
+  .actions { display: flex; align-items: center; gap: 14px; }
+  label.check { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--subtle); cursor: pointer; min-height: 44px; }
+  label.check input { width: 16px; height: 16px; accent-color: var(--accent); }
+  .btn { height: 40px; padding: 0 22px; border-radius: 10px; border: 0; background: var(--accent); color: #0a0b0f; font: 600 14px/1 inherit; font-family: inherit; cursor: pointer; }
+  .btn:hover { filter: brightness(1.1); } .btn:disabled { opacity: .45; cursor: default; filter: none; }
+  .btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+  <div class="bar" data-tauri-drag-region>
+    <span>Lumen RPC Setup · Lite</span>
+    <div class="win">
+      <button id="min" aria-label="Minimize"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M0 5h10" stroke="currentColor"/></svg></button>
+      <button id="close" class="close" aria-label="Close"><svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><path d="M0 0l10 10M10 0L0 10" stroke="currentColor"/></svg></button>
+    </div>
+  </div>
+
+  <main>
+    <div class="orb" aria-hidden="true">
+      <svg class="rings" viewBox="0 0 248 248">
+        <circle cx="124" cy="124" r="120" fill="none" stroke="#1e2030"/>
+        <circle cx="124" cy="124" r="92" fill="none" stroke="#242636"/>
+        <circle cx="124" cy="4" r="5" fill="#4FD1C5"/>
+        <circle cx="244" cy="124" r="4" fill="#FF8A4C"/>
+        <circle cx="32" cy="124" r="4" fill="#F472B6"/>
+      </svg>
+      <svg class="logo" viewBox="0 0 512 512">
+        <rect width="512" height="512" rx="116" fill="#8B7CFF"/>
+        <circle cx="256" cy="256" r="148" fill="none" stroke="#0B0C10" stroke-width="30"/>
+        <circle cx="256" cy="256" r="80" fill="#0B0C10"/>
+        <circle cx="230" cy="228" r="24" fill="#EDEBFF"/>
+        <circle cx="361" cy="151" r="58" fill="#8B7CFF"/>
+        <circle cx="361" cy="151" r="38" fill="#3DD68C"/>
+      </svg>
+    </div>
+    <div class="content">
+      <div class="eyebrow" id="eyebrow">Web installer</div>
+      <h1 id="title">Install Lumen RPC</h1>
+      <p id="lead">Downloads the latest version from GitHub and sets it up for you.</p>
+      <dl class="meta" id="meta" hidden>
+        <dt>Version</dt><dd id="version">—</dd>
+        <dt>Download</dt><dd id="size">—</dd>
+        <dt>Location</dt><dd id="target">—</dd>
+      </dl>
+      <div class="progress indeterminate" id="progress" role="progressbar" aria-label="Progress" aria-valuemin="0" aria-valuemax="100"><i></i></div>
+      <div class="status" id="status" aria-live="polite">Checking for the latest release…</div>
+      <div class="error" id="error" role="alert" hidden></div>
+    </div>
+  </main>
+
+  <footer>
+    <span class="credit">Made by <button class="link" id="author">Oskar Trzaskawka</button></span>
+    <div class="actions">
+      <label class="check" id="launchWrap"><input type="checkbox" id="launch" checked> Launch when done</label>
+      <button class="btn ghost" id="manual" hidden>Download manually</button>
+      <button class="btn" id="go" disabled>Install</button>
+    </div>
+  </footer>
+
+<script>
+  const T = window.__TAURI__;
+  const $ = (id) => document.getElementById(id);
+  const REPO = "https://github.com/OskarTrzaskawka/LumenRPC";
+  const win = T.window.getCurrentWindow();
+  let release = null, phase = "loading";
+
+  const mb = (b) => (b / 1048576).toFixed(1) + " MB";
+  const setProgress = (pct) => {
+    const bar = $("progress");
+    if (pct == null) { bar.classList.add("indeterminate"); bar.removeAttribute("aria-valuenow"); return; }
+    bar.classList.remove("indeterminate");
+    bar.firstElementChild.style.width = pct + "%";
+    bar.setAttribute("aria-valuenow", String(Math.round(pct)));
+  };
+  const fail = (msg) => {
+    phase = "error";
+    $("error").textContent = String(msg);
+    $("error").hidden = false;
+    $("status").textContent = "";
+    setProgress(0);
+    $("go").textContent = "Try again";
+    $("go").disabled = false;
+    $("manual").hidden = false;
+  };
+
+  async function load() {
+    phase = "loading";
+    $("error").hidden = true; $("manual").hidden = true;
+    $("go").disabled = true; $("go").textContent = "Install";
+    $("status").textContent = "Checking for the latest release…";
+    setProgress(null);
+    try {
+      release = await T.core.invoke("get_release");
+      $("version").textContent = release.version;
+      $("size").textContent = mb(release.size);
+      $("target").textContent = release.target;
+      $("target").title = release.target;
+      $("meta").hidden = false;
+      $("status").textContent = "Ready to install.";
+      setProgress(0);
+      $("go").disabled = false;
+      phase = "ready";
+    } catch (e) { fail(e); }
+  }
+
+  async function install() {
+    phase = "working";
+    $("go").disabled = true; $("launchWrap").hidden = true; $("error").hidden = true; $("manual").hidden = true;
+    $("title").textContent = "Installing Lumen RPC";
+    try {
+      await T.core.invoke("install", { url: release.url, asset: release.asset, launch: $("launch").checked });
+      phase = "done";
+      setProgress(100);
+      $("eyebrow").textContent = "All set";
+      $("title").textContent = "Lumen RPC is installed";
+      $("lead").textContent = $("launch").checked ? "It’s starting now. Paste your Client ID to connect." : "Find it in your applications.";
+      $("status").textContent = "";
+      $("go").textContent = "Close";
+      $("go").disabled = false;
+    } catch (e) { $("launchWrap").hidden = false; $("title").textContent = "Install Lumen RPC"; fail(e); }
+  }
+
+  T.event.listen("progress", ({ payload: p }) => {
+    if (p.stage === "install") { setProgress(null); $("status").textContent = "Installing…"; return; }
+    const pct = p.total ? (p.done / p.total) * 100 : null;
+    setProgress(pct);
+    $("status").textContent = `Downloading… ${mb(p.done)}${p.total ? " of " + mb(p.total) : ""}`;
+  });
+
+  $("go").addEventListener("click", () => {
+    if (phase === "ready") install();
+    else if (phase === "error") release ? install() : load();
+    else if (phase === "done") win.close();
+  });
+  $("manual").addEventListener("click", () => T.opener.openUrl(REPO + "/releases/latest"));
+  $("author").addEventListener("click", () => T.opener.openUrl("https://github.com/OskarTrzaskawka"));
+  $("close").addEventListener("click", () => win.close());
+  $("min").addEventListener("click", () => win.minimize());
+  load();
+</script>
+</body>
+</html>

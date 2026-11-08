@@ -1,0 +1,71 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "Lumen RPC",
+  "mainBinaryName": "LumenRPC",
+  "version": "0.1.0",
+  "identifier": "xyz.lumenrpc.app",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://localhost:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "Lumen RPC",
+        "width": 1280,
+        "height": 820,
+        "minWidth": 960,
+        "minHeight": 640,
+        "center": true,
+        "visible": false
+      }
+    ],
+    "security": {
+      "csp": null
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": "all",
+    "publisher": "Oskar Trzaskawka",
+    "copyright": "© 2026 Oskar Trzaskawka",
+    "homepage": "https://github.com/OskarTrzaskawka/LumenRPC",
+    "license": "MIT",
+    "licenseFile": "../LICENSE",
+    "shortDescription": "Discord Rich Presence manager",
+    "longDescription": "Lumen RPC sets a custom Discord Rich Presence with live preview, seven timer modes, automations, a weekly schedule and templates.",
+    "category": "Utility",
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "windows": {
+      "nsis": {
+        "installerIcon": "icons/icon.ico",
+        "headerImage": "installer/nsis-header.bmp",
+        "sidebarImage": "installer/nsis-sidebar.bmp",
+        "installMode": "currentUser",
+        "languages": ["English", "Polish"],
+        "displayLanguageSelector": true
+      }
+    },
+    "macOS": {
+      "minimumSystemVersion": "11.0",
+      "dmg": {
+        "background": "installer/dmg-background.png",
+        "windowSize": { "width": 660, "height": 400 },
+        "appPosition": { "x": 180, "y": 225 },
+        "applicationFolderPosition": { "x": 480, "y": 225 }
+      }
+    },
+    "linux": {
+      "deb": { "section": "utils" }
+    }
+  }
+}

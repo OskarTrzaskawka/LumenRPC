@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="164" height="314" viewBox="0 0 164 314">
+  <rect width="164" height="314" fill="#0A0B0F"/>
+  <g fill="none" stroke="#1E2030">
+    <circle cx="82" cy="250" r="120"/>
+    <circle cx="82" cy="250" r="80"/>
+  </g>
+  <g transform="translate(42 44) scale(0.15625)">
+    <rect width="512" height="512" rx="116" fill="#8B7CFF"/>
+    <circle cx="256" cy="256" r="148" fill="none" stroke="#0B0C10" stroke-width="30"/>
+    <circle cx="256" cy="256" r="80" fill="#0B0C10"/>
+    <circle cx="230" cy="228" r="24" fill="#EDEBFF"/>
+    <circle cx="361" cy="151" r="58" fill="#8B7CFF"/>
+    <circle cx="361" cy="151" r="38" fill="#3DD68C"/>
+  </g>
+  <text x="82" y="152" text-anchor="middle" font-family="Segoe UI, sans-serif" font-weight="700" font-size="19" fill="#ECEEF5">Lumen RPC</text>
+  <text x="82" y="174" text-anchor="middle" font-family="Segoe UI, sans-serif" font-size="11" fill="#9A9EB3">Discord Rich Presence</text>
+  <circle cx="22" cy="232" r="4" fill="#4FD1C5"/>
+  <circle cx="148" cy="290" r="4" fill="#FF8A4C"/>
+</svg>
