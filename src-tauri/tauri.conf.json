@@ -3,7 +3,7 @@
   "productName": "Lumen RPC",
   "mainBinaryName": "LumenRPC",
   "version": "0.1.0",
-  "identifier": "xyz.lumenrpc.app",
+  "identifier": "xyz.lumenrpc.desktop",
   "build": {
     "beforeDevCommand": "npm run dev",
     "devUrl": "http://localhost:1420",
