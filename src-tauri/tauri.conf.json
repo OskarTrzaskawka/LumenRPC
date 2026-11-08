@@ -29,7 +29,7 @@
   },
   "bundle": {
     "active": true,
-    "targets": "all",
+    "targets": ["nsis", "msi"],
     "publisher": "Oskar Trzaskawka",
     "copyright": "© 2026 Oskar Trzaskawka",
     "homepage": "https://github.com/OskarTrzaskawka/LumenRPC",
@@ -54,18 +54,6 @@
         "languages": ["English", "Polish"],
         "displayLanguageSelector": true
       }
-    },
-    "macOS": {
-      "minimumSystemVersion": "11.0",
-      "dmg": {
-        "background": "installer/dmg-background.png",
-        "windowSize": { "width": 660, "height": 400 },
-        "appPosition": { "x": 180, "y": 225 },
-        "applicationFolderPosition": { "x": 480, "y": 225 }
-      }
-    },
-    "linux": {
-      "deb": { "section": "utils" }
     }
   }
 }

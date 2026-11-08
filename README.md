@@ -11,9 +11,7 @@
 </p>
 
 <p align="center">
-  <img alt="Windows" src="https://img.shields.io/badge/Windows-0078D4?style=flat-square&logo=windows&logoColor=white">
-  <img alt="macOS" src="https://img.shields.io/badge/macOS-000000?style=flat-square&logo=apple&logoColor=white">
-  <img alt="Linux" src="https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black">
+  <img alt="Windows 10/11" src="https://img.shields.io/badge/Windows_10%2F11-0078D4?style=flat-square&logo=windows&logoColor=white">
   <img alt="Tauri 2" src="https://img.shields.io/badge/Tauri_2-24C8D8?style=flat-square&logo=tauri&logoColor=white">
   <img alt="Rust" src="https://img.shields.io/badge/Rust-B7410E?style=flat-square&logo=rust&logoColor=white">
   <img alt="React 19" src="https://img.shields.io/badge/React_19-20232A?style=flat-square&logo=react&logoColor=61DAFB">
@@ -36,19 +34,15 @@
 
 ## Download
 
-Two installers for every system:
+Lumen RPC runs on **Windows 10 and 11** (64-bit). Pick one of two installers:
 
-- **Full installer** – everything inside, installs offline.
-- **Lite installer** – a small setup app that downloads and installs the newest version from this repository.
-
-| | Full installer | Lite installer |
+| Installer | What it does | Download |
 | --- | --- | --- |
-| **Windows 10/11** | [`*_x64-setup.exe` / `.msi`](https://github.com/OskarTrzaskawka/LumenRPC/releases/latest) | [`LumenRPC-Lite-Setup-windows-x64.exe`](https://github.com/OskarTrzaskawka/LumenRPC/releases/latest/download/LumenRPC-Lite-Setup-windows-x64.exe) |
-| **macOS 11+** | [`*_aarch64.dmg` (Apple Silicon) / `*_x64.dmg` (Intel)](https://github.com/OskarTrzaskawka/LumenRPC/releases/latest) | [`LumenRPC-Lite-Setup-macos-universal.dmg`](https://github.com/OskarTrzaskawka/LumenRPC/releases/latest/download/LumenRPC-Lite-Setup-macos-universal.dmg) |
-| **Linux** | [`.AppImage` / `.deb` / `.rpm`](https://github.com/OskarTrzaskawka/LumenRPC/releases/latest) | [`LumenRPC-Lite-Setup-linux-x86_64.AppImage`](https://github.com/OskarTrzaskawka/LumenRPC/releases/latest/download/LumenRPC-Lite-Setup-linux-x86_64.AppImage) |
+| **Full** | Everything inside, installs offline. Also available as `.msi`. | [`Lumen.RPC_x64-setup.exe`](https://github.com/OskarTrzaskawka/LumenRPC/releases/latest) |
+| **Lite** | A small setup app that downloads and installs the newest version from this repository. | [`LumenRPC-Lite-Setup-windows-x64.exe`](https://github.com/OskarTrzaskawka/LumenRPC/releases/latest/download/LumenRPC-Lite-Setup-windows-x64.exe) |
 
 > [!NOTE]
-> The builds are not code-signed yet. On Windows click **More info → Run anyway**; on macOS right-click the app and choose **Open** the first time.
+> The builds are not code-signed yet. If Windows SmartScreen appears, click **More info → Run anyway**.
 
 ## Features
 
@@ -73,27 +67,27 @@ Two installers for every system:
 
 ## Building from source
 
-Requirements: Node.js 20+, Rust (stable, via [rustup](https://rustup.rs)) and the [Tauri prerequisites](https://tauri.app/start/prerequisites/) for your OS.
+Requirements on Windows: Node.js 20+, Rust (stable, via [rustup](https://rustup.rs)) and Microsoft C++ Build Tools (see the [Tauri prerequisites](https://tauri.app/start/prerequisites/)).
 
 ```bash
 npm install
 npm run tauri dev        # run the app
-npm run tauri build      # full installers → src-tauri/target/release/bundle
+npm run tauri build      # full installers (.exe + .msi) → src-tauri/target/release/bundle
 npm run build:demo       # browser demo with a simulated Discord connection
 node scripts/render-branding.mjs   # re-render logo, banners and installer artwork
 
-# lite installer
-cd installer && node ../node_modules/@tauri-apps/cli/tauri.js build
+# lite installer → installer/src-tauri/target/release/LumenRPC-Lite-Setup.exe
+cd installer && node ../node_modules/@tauri-apps/cli/tauri.js build --no-bundle
 ```
 
-Releases are built by GitHub Actions: push a tag such as `v0.1.0` and every installer for Windows, macOS and Linux is attached to a draft release.
+Releases can also be built by GitHub Actions: push a tag such as `v0.2.0` and both Windows installers are attached to a draft release.
 
 <details>
 <summary><b>Project layout</b></summary>
 
 | Path | What it is |
 | --- | --- |
-| `src-tauri/src/rpc.rs` | Discord IPC client (named pipe / Unix socket, auto-reconnect) |
+| `src-tauri/src/rpc.rs` | Discord IPC client (named pipe, auto-reconnect) |
 | `src-tauri/src/system.rs` | Running apps and idle time for automations |
 | `src-tauri/src/lib.rs` | Tray, commands and plugins |
 | `src/lib/activity.ts` | Presence payload, timer modes and validation |

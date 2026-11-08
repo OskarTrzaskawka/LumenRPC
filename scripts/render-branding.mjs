@@ -56,7 +56,6 @@ out("branding/png/logo-1024.png", render("logo.svg", 1024).asPng());
 out("branding/png/logo-256.png", render("logo.svg", 256).asPng());
 out("branding/png/banner.png", render("banner.svg", 2560).asPng());
 out("branding/png/social-preview.png", render("social-preview.svg", 1280).asPng());
-out("src-tauri/installer/dmg-background.png", render("dmg-background.svg", 660).asPng());
 out("src-tauri/installer/nsis-sidebar.bmp", toBmp(render("installer-sidebar.svg", 164)));
 out("src-tauri/installer/nsis-header.bmp", toBmp(render("installer-header.svg", 150)));
 out("public/lumen.svg", readFileSync(src("logo.svg")));
