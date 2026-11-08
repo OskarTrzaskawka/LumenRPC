@@ -51,7 +51,8 @@ export function Preview({ profile, live }: { profile: Profile; live: boolean }) 
   const ts = timestamps(profile, { now, appStart, profileStart: start });
   const large = assetUrl(profile.largeImage, app?.id, assets);
   const small = assetUrl(profile.smallImage, app?.id, assets);
-  const appName = app?.name ?? "Your application";
+  const customName = fillVars(profile.appName, profile, d).trim();
+  const appName = customName || app?.name || "Your application";
   const name = user?.global_name || user?.username || "you";
   const avatar = user?.avatar ? `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png?size=128` : null;
   const party = profile.party.enabled && profile.party.max > 0 ? ` (${Math.min(profile.party.size, profile.party.max)} of ${profile.party.max})` : "";

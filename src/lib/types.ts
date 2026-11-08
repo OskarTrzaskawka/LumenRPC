@@ -13,6 +13,8 @@ export interface Profile {
   color: string;
   activityType: ActivityType;
   statusDisplay: StatusDisplay;
+  /** Overrides the application name shown in Discord. Empty = the Developer Portal name. */
+  appName: string;
   details: string;
   detailsUrl: string;
   state: string;
@@ -110,6 +112,7 @@ export function newProfile(patch: Partial<Profile> = {}): Profile {
     color: PROFILE_COLORS[Math.floor(Math.random() * PROFILE_COLORS.length)],
     activityType: 0,
     statusDisplay: 0,
+    appName: "",
     details: "",
     detailsUrl: "",
     state: "",
@@ -137,9 +140,11 @@ export const defaultSettings: Settings = {
 };
 
 export function defaultPersisted(): Persisted {
+  // Starts empty so a game's or app's Client ID just shows "Playing <name>" with a timer.
+  const blank = newProfile({ name: "Default", color: "#8B7CFF" });
   const coding = newProfile({
     name: "Coding",
-    color: "#8B7CFF",
+    color: "#60A5FA",
     details: "Working on a project",
     state: "Local time {time}",
     largeText: "Lumen RPC",
@@ -165,8 +170,8 @@ export function defaultPersisted(): Persisted {
     version: 1,
     clientId: "",
     recentClients: [],
-    profiles: [coding, gaming, afk],
-    activeProfileId: coding.id,
+    profiles: [blank, coding, gaming, afk],
+    activeProfileId: blank.id,
     rules: [{ id: uid(), enabled: false, trigger: "idle", process: "", idleMinutes: 10, profileId: afk.id }],
     schedule: [],
     settings: defaultSettings,

@@ -24,7 +24,7 @@ export function fillVars(text: string, p: Profile, now = new Date()): string {
 }
 
 export const usesClockVars = (p: Profile) =>
-  [p.details, p.state, p.largeText, p.smallText].some((t) => /\{(time|date|day)\}/.test(t));
+  [p.appName, p.details, p.state, p.largeText, p.smallText].some((t) => /\{(time|date|day)\}/.test(t));
 
 export const TIME_MODES: { id: TimeMode; title: string; desc: string }[] = [
   { id: "none", title: "No timer", desc: "Status without a clock" },
@@ -77,6 +77,8 @@ export function imageRef(value: string): string | undefined {
 export function buildActivity(p: Profile, ctx: TimeCtx) {
   const now = new Date(ctx.now);
   const a: Record<string, unknown> = { type: p.activityType, status_display_type: p.statusDisplay, instance: false };
+  const name = fillVars(p.appName, p, now).trim();
+  if (name) a.name = clip(name, 128);
   const details = fillVars(p.details, p, now).trim();
   const state = fillVars(p.state, p, now).trim();
   if (details.length >= 2) {
@@ -121,7 +123,7 @@ export function validate(p: Profile): string[] {
   if (p.details.trim().length === 1) w.push("Details must be at least 2 characters.");
   if (p.state.trim().length === 1) w.push("State must be at least 2 characters.");
   if (!p.details.trim() && !p.state.trim() && !p.largeImage.trim())
-    w.push("This status is empty — add details, a state or an image.");
+    w.push("Tip: only the app name will show — add details, a state or an image for more.");
   p.buttons.forEach((b, i) => {
     if (b.label.trim() && !isUrl(b.url)) w.push(`Button ${i + 1}: the link must start with https://`);
     if (b.label.length > 32) w.push(`Button ${i + 1}: labels can be at most 32 characters.`);

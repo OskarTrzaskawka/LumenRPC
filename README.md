@@ -50,6 +50,7 @@ Lumen RPC runs on **Windows 10 and 11** (64-bit). Pick one of two installers:
 | --- | --- |
 | **Bring your own app** | Paste the Application ID from the Discord Developer Portal; Lumen shows the app’s name, icon and your uploaded images. |
 | **Game & app finder** | Search all 25,000+ games Discord recognises plus popular apps (YouTube, Twitch, Netflix, Apple Music, VS Code, GitHub, Figma…) and show “Playing Minecraft” with the real name and icon — no Developer Portal needed. |
+| **Custom app name** | Override the name Discord shows (“Playing …”) per profile — no need to rename the app in the Developer Portal. |
 | **Studio editor** | Playing / Listening / Watching / Competing, what the member list shows, details and state with optional links, large and small images with hover text, party size and two buttons — with a live preview. |
 | **7 timer modes** | No timer · since app start · since the status was set · **your local time** · custom start date · countdown · “started X minutes ago”. |
 | **Variables** | `{time}`, `{date}`, `{day}` and `{profile}` refresh on their own. |

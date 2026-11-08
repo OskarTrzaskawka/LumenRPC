@@ -169,6 +169,9 @@ function EditorBody({ profile: p }: { profile: Profile }) {
 
         <Card title="Activity" icon={<Gamepad2 size={15} aria-hidden="true" />}>
           <div className="grid grid-cols-1 gap-4">
+            <Field label="App name" hint="Optional — replaces the name from the Developer Portal" counter={`${p.appName.length}/128`}>
+              <TextInput value={p.appName} maxLength={128} placeholder="Use the Developer Portal name" onChange={(e) => up({ appName: e.target.value })} />
+            </Field>
             <Field label="Activity type">
               <Segmented
                 label="Activity type"
