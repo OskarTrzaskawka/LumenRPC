@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { Keyboard, LogOut, Palette as PaletteIcon, Plug, SlidersHorizontal, Info } from "lucide-react";
+import { Gamepad2, Keyboard, LogOut, Palette as PaletteIcon, Plug, SlidersHorizontal, Info } from "lucide-react";
+import { AppFinder } from "../components/AppFinder";
 import { platform } from "../lib/platform";
 import { useStore } from "../lib/store";
 import { Button, Card, Field, PageHeader, TextInput, Toggle, cx } from "../components/ui";
@@ -15,6 +16,7 @@ export function SettingsPage() {
   const status = useStore((s) => s.status);
   const { setSettings } = useStore.getState();
   const [autostart, setAutostart] = useState(false);
+  const [finder, setFinder] = useState(false);
 
   useEffect(() => {
     platform.getAutostart().then(setAutostart, () => {});
@@ -42,9 +44,29 @@ export function SettingsPage() {
           <div className="mt-4">
             <Toggle checked={settings.autoConnect} onChange={(v) => setSettings({ autoConnect: v })} label="Connect automatically on launch" />
           </div>
-          <Button variant="danger" className="mt-3" onClick={() => void platform.disconnect()}>
-            <LogOut size={16} aria-hidden="true" /> Disconnect / change Client ID
-          </Button>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button variant="outline" onClick={() => setFinder(true)}>
+              <Gamepad2 size={16} aria-hidden="true" /> Switch to a game or app
+            </Button>
+            <Button variant="danger" onClick={() => void platform.disconnect()}>
+              <LogOut size={16} aria-hidden="true" /> Disconnect / change Client ID
+            </Button>
+          </div>
+          <AppFinder
+            open={finder}
+            current={clientId}
+            onClose={() => setFinder(false)}
+            onPick={(a) => {
+              setFinder(false);
+              const info = { id: a.id, name: a.name, icon: a.icon };
+              useStore.getState().setClientId(a.id, info);
+              useStore.setState({ app: info, assets: [] });
+              platform.connect(a.id).then(
+                () => useStore.getState().toast(`Switched to “${a.name}”`, "ok"),
+                (e) => useStore.getState().toast(String(e), "error"),
+              );
+            }}
+          />
         </Card>
 
         <Card title="Behaviour" icon={<SlidersHorizontal size={15} aria-hidden="true" />}>
@@ -105,7 +127,7 @@ export function SettingsPage() {
 
         <Card title="About" icon={<Info size={15} aria-hidden="true" />}>
           <p className="text-sm leading-relaxed text-subtle">
-            Lumen RPC 0.1.0 — Tauri 2, Rust and React 19. Talks to the Discord desktop app over local IPC; nothing leaves your computer except Discord API lookups for your application’s
+            Lumen RPC 0.2.0 — Tauri 2, Rust and React 19. Talks to the Discord desktop app over local IPC; nothing leaves your computer except Discord API lookups for your application’s
             name and images.
           </p>
           <p className="mt-3 text-sm text-subtle">

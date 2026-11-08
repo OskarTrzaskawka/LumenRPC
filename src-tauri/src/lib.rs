@@ -64,6 +64,29 @@ fn save_state(app: AppHandle, data: String) -> Result<(), String> {
     std::fs::rename(&tmp, &path).map_err(|e| e.to_string())
 }
 
+fn cache_path(app: &AppHandle, name: &str) -> Result<std::path::PathBuf, String> {
+    if name.is_empty() || !name.chars().all(|c| c.is_ascii_alphanumeric() || c == '-') {
+        return Err("Invalid cache name".into());
+    }
+    let dir = app.path().app_cache_dir().map_err(|e| e.to_string())?;
+    std::fs::create_dir_all(&dir).map_err(|e| e.to_string())?;
+    Ok(dir.join(format!("{name}.json")))
+}
+
+/// Returns the cached text and its age in seconds, if present.
+#[tauri::command]
+fn read_cache(app: AppHandle, name: String) -> Result<Option<(String, u64)>, String> {
+    let path = cache_path(&app, &name)?;
+    let Ok(meta) = std::fs::metadata(&path) else { return Ok(None) };
+    let age = meta.modified().ok().and_then(|m| m.elapsed().ok()).map(|d| d.as_secs()).unwrap_or(u64::MAX);
+    Ok(std::fs::read_to_string(path).ok().map(|s| (s, age)))
+}
+
+#[tauri::command]
+fn write_cache(app: AppHandle, name: String, data: String) -> Result<(), String> {
+    std::fs::write(cache_path(&app, &name)?, data).map_err(|e| e.to_string())
+}
+
 #[tauri::command]
 fn write_text_file(path: String, contents: String) -> Result<(), String> {
     std::fs::write(path, contents).map_err(|e| e.to_string())
@@ -172,6 +195,8 @@ pub fn run() {
             rpc_status,
             load_state,
             save_state,
+            read_cache,
+            write_cache,
             write_text_file,
             read_text_file,
             list_processes,

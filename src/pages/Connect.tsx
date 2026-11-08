@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { ArrowRight, CircleAlert, ExternalLink, LoaderCircle, Clock3, Zap, CalendarDays, LayoutGrid } from "lucide-react";
+import { ArrowRight, CircleAlert, ExternalLink, LoaderCircle, Clock3, Zap, CalendarDays, LayoutGrid, Gamepad2 } from "lucide-react";
 import { platform } from "../lib/platform";
 import { useStore } from "../lib/store";
 import type { AppInfo } from "../lib/types";
 import { LogoMark, OrbitHero } from "../components/art";
 import { Button, TextInput } from "../components/ui";
+import { AppFinder } from "../components/AppFinder";
+import type { CatalogApp } from "../lib/appCatalog";
 
 const PORTAL = "https://discord.com/developers/applications";
 
@@ -23,11 +25,17 @@ export function Connect() {
   const [app, setApp] = useState<AppInfo | null>(null);
   const [lookup, setLookup] = useState<"idle" | "loading" | "found" | "missing">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [finder, setFinder] = useState(false);
+  const [picked, setPicked] = useState<CatalogApp | null>(null);
   const valid = /^\d{17,20}$/.test(id.trim());
 
   useEffect(() => {
     setApp(null);
     if (!valid) return setLookup("idle");
+    if (picked?.id === id.trim()) {
+      setApp({ id: picked.id, name: picked.name, icon: picked.icon });
+      return setLookup("found");
+    }
     setLookup("loading");
     const t = setTimeout(async () => {
       const info = await platform.fetchApp(id.trim());
@@ -35,7 +43,7 @@ export function Connect() {
       setLookup(info ? "found" : "missing");
     }, 450);
     return () => clearTimeout(t);
-  }, [id, valid]);
+  }, [id, valid, picked]);
 
   const connect = async (clientId = id.trim(), info = app) => {
     setError(null);
@@ -91,15 +99,23 @@ export function Connect() {
             }}
           >
             <label htmlFor="client-id" className="text-[13px] text-subtle">Client ID (Application ID)</label>
-            <TextInput
-              id="client-id"
-              inputMode="numeric"
-              autoComplete="off"
-              placeholder="e.g. 1234567890123456789"
-              value={id}
-              onChange={(e) => setId(e.target.value.replace(/\D/g, ""))}
-              className="h-12 font-mono text-[15px] tracking-wide"
-            />
+            <div className="flex gap-2">
+              <TextInput
+                id="client-id"
+                inputMode="numeric"
+                autoComplete="off"
+                placeholder="e.g. 1234567890123456789"
+                value={id}
+                onChange={(e) => setId(e.target.value.replace(/\D/g, ""))}
+                className="h-12 font-mono text-[15px] tracking-wide"
+              />
+              <Button type="button" variant="outline" className="h-12 shrink-0" onClick={() => setFinder(true)}>
+                <Gamepad2 size={17} aria-hidden="true" /> Browse
+              </Button>
+            </div>
+            <p className="-mt-1 text-xs text-muted">
+              Use your own app, or <button type="button" onClick={() => setFinder(true)} className="cursor-pointer text-subtle underline-offset-2 hover:text-accent hover:underline">pick a game or app</button> (Minecraft, YouTube, Twitch…) to show its name and icon.
+            </p>
 
             <div className="flex min-h-14 items-center gap-3 rounded-xl border border-line bg-card px-3 py-2.5 text-sm">
               {lookup === "idle" && <span className="text-muted">Paste a 17–20 digit ID to look up your application.</span>}
@@ -175,6 +191,16 @@ export function Connect() {
           <Button variant="ghost" className="mt-4 -ml-3" onClick={() => void platform.openUrl(PORTAL)}>
             Open Developer Portal <ExternalLink size={15} aria-hidden="true" />
           </Button>
+          <AppFinder
+            open={finder}
+            current={id}
+            onClose={() => setFinder(false)}
+            onPick={(a) => {
+              setPicked(a);
+              setId(a.id);
+              setFinder(false);
+            }}
+          />
         </motion.div>
       </main>
     </div>

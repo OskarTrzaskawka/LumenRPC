@@ -1,6 +1,7 @@
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import type { AppInfo, Asset, RpcStatus } from "./types";
+import { DEMO_GAMES, KNOWN_APPS } from "./knownApps";
 
 /** Everything the UI needs from the host. The demo implementation lets the UI run in a plain browser. */
 export interface Platform {
@@ -27,6 +28,16 @@ export interface Platform {
   getAutostart(): Promise<boolean>;
   setAutostart(v: boolean): Promise<void>;
   registerShortcut(accelerator: string, cb: () => void): Promise<() => void>;
+  readCache(name: string): Promise<[string, number] | null>;
+  writeCache(name: string, data: string): Promise<void>;
+  fetchDetectable(): Promise<DetectableApp[]>;
+}
+
+export interface DetectableApp {
+  id: string;
+  name: string;
+  icon_hash?: string | null;
+  aliases?: string[];
 }
 
 export const isTauri = typeof window !== "undefined" && "__TAURI_INTERNALS__" in window;
@@ -108,6 +119,13 @@ const tauriPlatform: Platform = {
     });
     return () => void gs.unregister(accelerator);
   },
+  readCache: (name) => invoke<[string, number] | null>("read_cache", { name }),
+  writeCache: (name, data) => invoke("write_cache", { name, data }),
+  async fetchDetectable() {
+    const list = await discordGet<DetectableApp[]>("/applications/detectable");
+    if (!list) throw new Error("Discord returned an error");
+    return list;
+  },
 };
 
 /* ---------------- Demo (browser) ---------------- */
@@ -161,7 +179,11 @@ const demoPlatform: Platform = {
   },
   processes: async () => ["code.exe", "discord.exe", "spotify.exe", "obs64.exe", "explorer.exe", "steam.exe"],
   idleSeconds: async () => 0,
-  fetchApp: async (id) => (/^\d{17,20}$/.test(id) ? { id, name: "My Application", icon: null } : null),
+  async fetchApp(id) {
+    if (!/^\d{17,20}$/.test(id)) return null;
+    const known = [...KNOWN_APPS, ...DEMO_GAMES].find((a) => a.id === id);
+    return known ? { id, name: known.name, icon: known.icon } : { id, name: "My Application", icon: null };
+  },
   fetchAssets: async () => [
     { id: "a1", name: "logo" },
     { id: "a2", name: "code" },
@@ -196,6 +218,9 @@ const demoPlatform: Platform = {
   getAutostart: async () => false,
   setAutostart: async () => {},
   registerShortcut: async () => () => {},
+  readCache: async () => null,
+  writeCache: async () => {},
+  fetchDetectable: async () => [],
 };
 
 export const platform: Platform = isTauri ? tauriPlatform : demoPlatform;

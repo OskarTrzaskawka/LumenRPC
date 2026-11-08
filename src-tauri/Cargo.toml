@@ -1,6 +1,6 @@
 [package]
 name = "lumenrpc"
-version = "0.1.0"
+version = "0.2.0"
 description = "Lumen RPC — a modern Discord Rich Presence manager"
 authors = ["SharkSleeper"]
 edition = "2024"
